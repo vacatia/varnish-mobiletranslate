@@ -9,8 +9,8 @@ A VCL script that adds a `X-UA-Device` header to the request.
 
 Device Type|X-UA-Device
 -----------|------------
-Phone      |  mobile
-Tablet     |  mobile;tablet
+Phone      |  phone
+Tablet     |  tablet
 Other      |  desktop
 
 ###Requirements
@@ -121,3 +121,7 @@ Thanks to these projects for help and inspiration
 https://github.com/serbanghita/Mobile-Detect
 
 https://github.com/varnish/varnish-devicedetect
+
+###Update mobile_detect.vcl
+
+You can update the mobile detection rules using latest from `serbanghita/Mobile-Detect`, by executing `php varnishtranslate.php`. Then push the `mobile_detect.vcl` to the repo.

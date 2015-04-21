@@ -3,8 +3,31 @@ $jsonRules =  file_get_contents("https://raw.github.com/serbanghita/Mobile-Detec
 
 $rules = json_decode($jsonRules);
 
-?>
-# Copyright (c) 2014, Willem Kappers
+function returnVarnishRules($rulesArray, $key, $useElse = false) {
+    $retString = "\t\t";
+    if ($useElse) {
+        $retString .= "else if (\n";
+    } else {
+        $retString .= "if (\n";
+    }
+    $count = 0;
+    foreach ($rulesArray as $rule) {
+        $retString .= "\t\t";
+        $retString .= "   (req.http.User-Agent ~ \"(?i)$rule\")";
+        if ($count < (count((array)$rulesArray) -1)) {
+            $retString .= " ||\n";
+        } else {
+            $retString .= ") {\n";
+        }
+        $count++;
+    }
+    $retString .= "\t\t\tset req.http.X-UA-Device = \"$key\";\n";
+    $retString .= "\t\t}\n\n";
+
+    return $retString;
+}
+
+$output[] = sprintf('# Copyright (c) 2014, Willem Kappers
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,9 +58,10 @@ $rules = json_decode($jsonRules);
 # https://github.com/willemk/varnish-mobiletranslate
 #
 # Author: Willem Kappers
+# Enhancements: Radu Topala <radu.topala@trisoft.ro>
 
 sub devicedetect {
-	#Based on Mobile detect <?php echo $rules->version?>
+	#Based on Mobile detect %s
 	
 	#https://github.com/serbanghita/Mobile-Detect
 	unset req.http.X-UA-Device;
@@ -51,59 +75,22 @@ sub devicedetect {
 		/* If the cookie header is now empty, or just whitespace, unset it. */
 		if (req.http.Cookie ~ "^ *$") { unset req.http.Cookie; }
 	} else {
-
-<?php
-
+', $rules->version);
 
 $phones = $rules->uaMatch->phones;
-echo returnVarnishRules($phones,"mobile");
+$output[] = returnVarnishRules($phones, "phone");
 
 $mobileBrowsers = $rules->uaMatch->browsers;
-echo returnVarnishRules($mobileBrowsers,"mobile",false, true);
+$output[] = returnVarnishRules($mobileBrowsers, "phone", true);
 
 $mobileOS = $rules->uaMatch->os;
-echo returnVarnishRules($mobileOS,"mobile",false, true);
+$output[] = returnVarnishRules($mobileOS, "phone", true);
 
 $tablets = $rules->uaMatch->tablets;
-echo returnVarnishRules($tablets,"tablet",true);
+$output[] = returnVarnishRules($tablets, "tablet");
 
-
-?>
-	}
+$output[] = '   }
 }
+';
 
-
-
-
-<?php
-function returnVarnishRules($rulesArray, $key, $tablet = false, $useElse = false){
-	$retString = "\t\t";
-	if ($useElse){
-		$retString .= "elsif (\n";
-	}else{
-			
-		$retString .= "if (\n";
-	}
-	$count = 0;
-	foreach($rulesArray as $rule){
-		$retString .= "\t\t";
-		$retString .= "   (req.http.User-Agent ~ \"(?i)$rule\")"; 
-		if ($count < (count((array)$rulesArray) -1)){
-			$retString .= " ||\n";
-		}else{
-			 $retString .= ") {\n";	
-		} 
-		$count++;
-	}
-	if ($tablet){
-		$retString .= "\t\t\tset req.http.X-UA-Device = \"mobile;$key\";\n";
-	}else{
-		$retString .= "\t\t\tset req.http.X-UA-Device = \"$key\";\n";
-	}
-	$retString .= "\t\t}\n\n";
-
-	return $retString;
-
-}
-
-?>
+file_put_contents('mobile_detect.vcl', implode('', $output));
