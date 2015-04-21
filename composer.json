@@ -1,0 +1,13 @@
+{
+    "name": "vacatia/varnish-mobiletranslate",
+    "require-dev": {
+        "php": ">=5.3.1"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Radu Topala",
+            "email": "radu.topala@trisoft.ro"
+        }
+    ]
+}
