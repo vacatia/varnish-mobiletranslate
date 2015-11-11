@@ -31,13 +31,13 @@ $output[] = sprintf('# Copyright (c) 2014, Willem Kappers
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met: 
-# 
+# modification, are permitted provided that the following conditions are met:
+#
 # 1. Redistributions of source code must retain the above copyright notice, this
-#    list of conditions and the following disclaimer. 
+#    list of conditions and the following disclaimer.
 # 2. Redistributions in binary form must reproduce the above copyright notice,
 #    this list of conditions and the following disclaimer in the documentation
-#    and/or other materials provided with the distribution. 
+#    and/or other materials provided with the distribution.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 # ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -49,9 +49,9 @@ $output[] = sprintf('# Copyright (c) 2014, Willem Kappers
 # ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-# 
+#
 # The views and conclusions contained in the software and documentation are those
-# of the authors and should not be interpreted as representing official policies, 
+# of the authors and should not be interpreted as representing official policies,
 # either expressed or implied, of the FreeBSD Project
 # mobile_detect.vcl - Drop-in varnish solution to mobile user detection based on the Mobile-Detect library
 #
@@ -62,7 +62,7 @@ $output[] = sprintf('# Copyright (c) 2014, Willem Kappers
 
 sub devicedetect {
 	#Based on Mobile detect %s
-	
+
 	#https://github.com/serbanghita/Mobile-Detect
 	unset req.http.X-UA-Device;
 	set req.http.X-UA-Device = "desktop";
@@ -93,4 +93,7 @@ $output[] = '   }
 }
 ';
 
-file_put_contents('mobile_detect.vcl', implode('', $output));
+$dir = !empty($argv[1]) ? realpath($argv[1]) : '';
+$dir = $dir ? $dir . '/' : '';
+
+file_put_contents($dir . 'mobile_detect.vcl', implode('', $output));
