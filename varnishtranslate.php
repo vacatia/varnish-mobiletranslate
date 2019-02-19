@@ -1,5 +1,5 @@
 <?php
-$jsonRules =  file_get_contents("https://raw.github.com/serbanghita/Mobile-Detect/master/Mobile_Detect.json");
+$jsonRules =  file_get_contents("https://raw.githubusercontent.com/serbanghita/Mobile-Detect/master/Mobile_Detect.json");
 
 $rules = json_decode($jsonRules);
 
